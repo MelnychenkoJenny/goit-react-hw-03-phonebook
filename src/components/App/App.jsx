@@ -13,11 +13,27 @@ import { ContactForm } from 'components/ContactForm';
 import { Filter } from 'components/Filter';
 import { Contacts } from 'components/Contacts';
 
+
+const STORAGE_KEY_CONTACTS = 'contacts';
+
 export class App extends Component {
   state = {
     contacts: initialContacts,
     filter: '',
   };
+  componentDidMount() {
+    const contacts = localStorage.getItem(STORAGE_KEY_CONTACTS);
+    const parsedContacts = JSON.parse(contacts);
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem(STORAGE_KEY_CONTACTS, JSON.stringify(this.state.contacts));
+    }
+  }
 
   addContact = (name, number) => {
     const formattedNumber = this.formattedNumber(number);
@@ -64,12 +80,6 @@ export class App extends Component {
     }
     return formattedNumber;
   };
-  componentDidUpdate(prevProps, prevState) {
-
-if(this.state.contacts === prevState.contacts) {
-
-}
-  }
 
   render() {
     const { contacts, filter } = this.state;
